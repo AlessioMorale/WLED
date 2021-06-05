@@ -190,6 +190,10 @@
 #endif
 
 
+#ifdef USERMOD_CLOCK_MATRIX
+#include "../usermods/clock_matrix/clock_matrix.h"
+#endif
+
 void registerUsermods()
 {
 /*
@@ -356,5 +360,9 @@ void registerUsermods()
 
   #ifdef USERMOD_SHT
   usermods.add(new ShtUsermod());
+  #endif
+  
+  #ifdef USERMOD_CLOCK_MATRIX
+  usermods.add(new ClockMatrixUsermod());
   #endif
 }
