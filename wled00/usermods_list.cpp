@@ -73,6 +73,10 @@
 #include "../usermods/EleksTube_IPS/usermod_elekstube_ips.h"
 #endif
 
+#ifdef USERMOD_CLOCK_MATRIX
+#include "../usermods/clock_matrix/clock_matrix.h"
+#endif
+
 void registerUsermods()
 {
 /*
@@ -141,5 +145,9 @@ void registerUsermods()
 
   #ifdef USERMOD_ELEKSTUBE_IPS
   usermods.add(new ElekstubeIPSUsermod());
+  #endif
+  
+  #ifdef USERMOD_CLOCK_MATRIX
+  usermods.add(new ClockMatrixUsermod());
   #endif
 }
