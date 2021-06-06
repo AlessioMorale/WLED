@@ -32,12 +32,9 @@ private:
 
   uint16_t get_led_index(int x, int y)
   {
-    auto r_y = y;
-    if (!(x % 2))
-    {
-      r_y = (MATRIX_HEIGHT - y) - 1;
-    }
-    return x * MATRIX_HEIGHT + r_y;
+    auto segment = strip.getSegment(x);
+    auto index = ((segment.options & REVERSE) == REVERSE) ? segment.stop - y - 1 : segment.start + y;
+    return index;
   }
 
   void set_pixel(int x, int y, uint32_t colour)
@@ -57,8 +54,7 @@ private:
     CRGB c(colour);
     if (set)
     {
-      c = strip.getColor();
-      c.maximizeBrightness(200);
+      c = strip.getSegment(0).colors[2];
     }
     strip.setPixelColor(get_led_index(x, y), c.r, c.g, c.b, 0);
   }
