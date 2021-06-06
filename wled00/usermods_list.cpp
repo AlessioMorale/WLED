@@ -74,7 +74,7 @@
 #endif
 
 #ifdef USERMOD_CLOCK_MATRIX
-#include "../usermods/clock_matrix/clock_matrix.h"
+#include "../usermods/clock_matrix/usermod_clock_matrix.h"
 #endif
 
 void registerUsermods()
