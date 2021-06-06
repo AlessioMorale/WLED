@@ -1,4 +1,5 @@
 # Matrix Clock
+
 This clock uses a matrix of 7x10 leds like the [Lazy Grid Clock v2](https://www.thingiverse.com/thing:4263318) design from the Thingiverse user [parallyze](https://www.thingiverse.com/parallyze)
 
 ## Installation 
@@ -8,8 +9,7 @@ This clock uses a matrix of 7x10 leds like the [Lazy Grid Clock v2](https://www.
 1. Copy `wled00/my_config_sample.h` as `wled00/my_config.h` (or edit the existing file if there is one)
 1. Add the following line at the end of the file
 
-
-``` C
+```C
 #define USERMOD_CLOCK_MATRIX
 ```
 
@@ -47,12 +47,13 @@ Follow the standard WiFI setup procedure (the clock needs an internet connection
 
 Create a preset with the following base configuration:
 
-``` json
+```json
 {
     "on": true,
     "bri": 139,
     "transition": 7,
     "mainseg": 0,
+    "matrix": {"dig_col": [250, 139, 30]},
     "seg": [
         {
             "id": 0,
@@ -316,9 +317,9 @@ Create a preset with the following base configuration:
 }
 ```
 
-Adjust segments `start`/`stop` and `reverse` values according to your wiring.
+Adjust segments `start` / `stop` and `reverse` values according to your wiring.
 
-the Third colour in the palette selection is used for the digits (next improvement will be moving this to some proper setting).
+Font color is set using `matrix.dig_col` parameter in the preset. If it's missing then the Third colour in the palette selection will be usedu.
 
 Play with effect/colour as you wish.
 
