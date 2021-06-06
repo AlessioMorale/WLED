@@ -19,7 +19,8 @@ class ClockMatrixUsermod : public Usermod
 private:
   unsigned long lastTime = 0;
   uint8_t last_count = 0;
-
+  bool _colour_from_state = false;
+  CRGB _clock_digits_colour;
   uint8_t hour = 0;
   uint8_t minute = 0;
   uint8_t second = 0;
@@ -54,7 +55,7 @@ private:
     CRGB c(colour);
     if (set)
     {
-      c = strip.getSegment(0).colors[2];
+      c = _clock_digits_colour;
     }
     strip.setPixelColor(get_led_index(x, y), c.r, c.g, c.b, 0);
   }
@@ -151,7 +152,7 @@ public:
     {
       for (int x = 0; x < MATRIX_WIDTH; x++)
       {
-        framebuffer[y][x] = false; //((x + y) % 2 == 0);
+        framebuffer[y][x] = false;
       }
     }
     callback overlay_handler = []()
@@ -165,11 +166,6 @@ public:
    */
   void connected()
   {
-    const char *ntpServer = "pool.ntp.org";
-
-    const long gmtOffset_sec = 0;
-    const int daylightOffset_sec = 3600;
-    configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   }
 
   /*
@@ -180,6 +176,11 @@ public:
   {
     if (millis() - lastTime > 1000)
     {
+      if (!_colour_from_state)
+      {
+        _clock_digits_colour = strip.getSegment(0).colors[2];
+      }
+
       if (update_time())
       {
         draw_clock();
@@ -193,100 +194,50 @@ public:
     }
   }
 
-  /*
-   * addToJsonInfo() can be used to add custom entries to the /json/info part of
-   * the JSON API. Creating an "u" object allows you to add custom key/value
-   * pairs to the Info section of the WLED web UI. Below it is shown how this
-   * could be used for e.g. a light sensor
-   */
-  /*
-  void addToJsonInfo(JsonObject& root)
+#define CLOCK_SETTINGS_KEY "matrix"
+#define CLOCK_DIGITS_COLOUR_KEY "dig_col"
+
+  void _saveToJson(JsonObject &root)
   {
-    int reading = 20;
-    //this code adds "u":{"Light":[20," lux"]} to the info object
-    JsonObject user = root["u"];
-    if (user.isNull()) user = root.createNestedObject("u");
-
-    JsonArray lightArr = user.createNestedArray("Light"); //name
-    lightArr.add(reading); //value
-    lightArr.add(" lux"); //unit
+    JsonObject top = root.createNestedObject(CLOCK_SETTINGS_KEY);
+    JsonArray colarr = top.createNestedArray(CLOCK_DIGITS_COLOUR_KEY);
+    colarr.add(_clock_digits_colour.r);
+    colarr.add(_clock_digits_colour.g);
+    colarr.add(_clock_digits_colour.b);
   }
-  */
 
-  /*
-   * addToJsonState() can be used to add custom entries to the /json/state part
-   * of the JSON API (state object). Values in the state object may be modified
-   * by connected clients
-   */
-  // void addToJsonState(JsonObject &root) {
-  // root["user0"] = userVar0;
-  //}
+  void _loadFromJson(JsonObject &root)
+  {
+    _colour_from_state = false;
+    JsonObject top = root[CLOCK_SETTINGS_KEY];
+    if (!top.isNull())
+    {
+      JsonArray colarr = top[CLOCK_DIGITS_COLOUR_KEY];
 
-  /*
-   * readFromJsonState() can be used to receive data clients send to the
-   * /json/state part of the JSON API (state object). Values in the state object
-   * may be modified by connected clients
-   */
-  // void readFromJsonState(JsonObject &root) {
-  //   userVar0 =
-  //       root["user0"] |
-  //       userVar0; // if "user0" key exists in JSON, update, else keep old
-  //       value
-  // if (root["bri"] == 255) Serial.println(F("Don't burn down your
-  // garage!"));
-  //}
+      if (!colarr.isNull())
+      {
+        _clock_digits_colour.r = colarr[0];
+        _clock_digits_colour.g = colarr[1];
+        _clock_digits_colour.b = colarr[2];
+        _colour_from_state = true;
+      }
+    }
+  }
 
-  /*
-   * addToConfig() can be used to add custom persistent settings to the cfg.json
-   * file in the "um" (usermod) object. It will be called by WLED when settings
-   * are actually saved (for example, LED settings are saved) If you want to
-   * force saving the current state, use serializeConfig() in your loop().
-   *
-   * CAUTION: serializeConfig() will initiate a filesystem write operation.
-   * It might cause the LEDs to stutter and will cause flash wear if called too
-   * often. Use it sparingly and always in the loop, never in network callbacks!
-   *
-   * addToConfig() will also not yet add your setting to one of the settings
-   * pages automatically. To make that work you still have to add the setting to
-   * the HTML, xml.cpp and set.cpp manually.
-   *
-   * I highly recommend checking out the basics of ArduinoJson serialization and
-   * deserialization in order to use custom settings!
-   */
-  // void addToConfig(JsonObject &root) {
-  //   JsonObject top = root.createNestedObject("exampleUsermod");
-  //   top["great"] =
-  //       userVar0; // save this var persistently whenever settings are saved
-  //}
+  void addToJsonState(JsonObject &root)
+  {
+    _saveToJson(root);
+  }
 
-  /*
-   * readFromConfig() can be used to read back the custom settings you added
-   * with addToConfig(). This is called by WLED when settings are loaded
-   * (currently this only happens once immediately after boot)
-   *
-   * readFromConfig() is called BEFORE setup(). This means you can use your
-   * persistent values in setup() (e.g. pin assignments, buffer sizes), but also
-   * that if you want to write persistent values to a dynamic buffer, you'd need
-   * to allocate it here instead of in setup. If you don't know what that is,
-   * don't fret. It most likely doesn't affect your use case :)
-   */
-  // void readFromConfig(JsonObject &root) {
-  //   JsonObject top = root["top"];
-  //   userVar0 =
-  //       top["great"] |
-  //       42; // The value right of the pipe "|" is the default value in case
-  //       your
-  // setting was not present in cfg.json (e.g. first boot)
-  //}
+  void readFromJsonState(JsonObject &root)
+  {
+    _loadFromJson(root);
+  }
 
   /*
    * getId() allows you to optionally give your V2 usermod an unique ID (please
    * define it in const.h!). This could be used in the future for the system to
    * determine whether your usermod is installed.
    */
-  uint16_t getId() { return USERMOD_ID_EXAMPLE; }
-
-  // More methods can be added in the future, this example will then be
-  // extended. Your usermod will remain compatible as it does not need to
-  // implement all methods from the Usermod base class!
+  uint16_t getId() { return USERMOD_ID_CLOCK_MATRIX; }
 };
