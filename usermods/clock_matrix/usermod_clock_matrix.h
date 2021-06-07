@@ -34,7 +34,7 @@ private:
   uint16_t get_led_index(int x, int y)
   {
     auto segment = strip.getSegment(x);
-    auto index = ((segment.options & REVERSE) == REVERSE) ? segment.stop - y - 1 : segment.start + y;
+    auto index = ((segment.options & REVERSE) == REVERSE) ? segment.start + y : segment.stop - y - 1;
     return index;
   }
 
