@@ -2,6 +2,10 @@
 
 This clock uses a matrix of 7x10 leds like the [Lazy Grid Clock v2](https://www.thingiverse.com/thing:4263318) design from the Thingiverse user [parallyze](https://www.thingiverse.com/parallyze)
 
+
+[![Video of some initial version](https://img.youtube.com/vi/WLaj6zPPARA/0.jpg)](https://www.youtube.com/watch?v=WLaj6zPPARA)
+
+
 ## Installation 
 
 ### Building the code
