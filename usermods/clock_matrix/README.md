@@ -2,9 +2,7 @@
 
 This clock uses a matrix of 7x10 leds like the [Lazy Grid Clock v2](https://www.thingiverse.com/thing:4263318) design from the Thingiverse user [parallyze](https://www.thingiverse.com/parallyze)
 
-
 [![Video of some initial version](https://img.youtube.com/vi/WLaj6zPPARA/0.jpg)](https://www.youtube.com/watch?v=WLaj6zPPARA)
-
 
 ## Installation 
 
@@ -323,7 +321,7 @@ Create a preset with the following base configuration:
 
 Adjust segments `start` / `stop` and `reverse` values according to your wiring.
 
-Font color is set using `matrix.dig_col` parameter in the preset. If it's missing then the Third colour in the palette selection will be usedu.
+Font color is set using `matrix.dig_col` parameter in the preset. It will default to #FF00FF if not specified.
 
 Play with effect/colour as you wish.
 
