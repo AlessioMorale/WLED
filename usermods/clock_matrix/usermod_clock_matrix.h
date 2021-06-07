@@ -19,8 +19,7 @@ class ClockMatrixUsermod : public Usermod
 private:
   unsigned long lastTime = 0;
   uint8_t last_count = 0;
-  bool _colour_from_state = false;
-  CRGB _clock_digits_colour;
+  CRGB _clock_digits_colour = CRGB::Fuchsia;
   uint8_t _hour = 0;
   uint8_t _minute = 0;
   uint8_t _second = 0;
@@ -173,11 +172,6 @@ public:
   {
     if (millis() - lastTime > 1000)
     {
-      if (!_colour_from_state)
-      {
-        _clock_digits_colour = strip.getSegment(0).colors[2];
-      }
-
       if (update_time())
       {
         draw_clock();
@@ -205,7 +199,6 @@ public:
 
   void _loadFromJson(JsonObject &root)
   {
-    _colour_from_state = false;
     JsonObject top = root[CLOCK_SETTINGS_KEY];
     if (!top.isNull())
     {
@@ -216,7 +209,6 @@ public:
         _clock_digits_colour.r = colarr[0];
         _clock_digits_colour.g = colarr[1];
         _clock_digits_colour.b = colarr[2];
-        _colour_from_state = true;
       }
     }
   }
