@@ -1,6 +1,7 @@
 #pragma once
 
 #include "tom-thumb.h"
+#include "custom_font.h"
 #include "wled.h"
 #include <array>
 #include <bitset>
@@ -70,7 +71,7 @@ private:
     }
   };
 
-  unsigned short get_char_index(uint8_t ascii)
+  unsigned short get_char_index(uint8_t ascii, const bitmap_font &font)
   {
     uint i = 0;
 
@@ -81,9 +82,9 @@ private:
     return i;
   }
 
-  Character get_char(uint8_t ascii)
+  Character get_char(uint8_t char_index, const bitmap_font &font)
   {
-    auto index = get_char_index(ascii);
+    auto index = get_char_index(char_index, font);
     Character c;
     c.reset();
     auto disp = index * font.Height;
@@ -101,9 +102,9 @@ private:
     return c;
   }
 
-  void draw_digit(int x, int y, uint8_t ascii)
+  void draw_digit(int x, int y, uint8_t ascii, const bitmap_font &font)
   {
-    auto character = get_char(ascii);
+    auto character = get_char(ascii, font);
     for (int n = 0; n < character.size(); n++)
     {
       int c_x = n % DIGIT_WIDTH + x;
@@ -123,18 +124,18 @@ private:
 
   void draw_clock()
   {
-    draw_digit(0, 0, _hour / 10 + 48);
-    draw_digit(4, 0, _hour % 10 + 48);
-    draw_digit(0, 6, _minute / 10 + 48);
-    draw_digit(4, 6, _minute % 10 + 48);
+    draw_digit(0, 0, _hour / 10, numbers_font);
+    draw_digit(4, 0, _hour % 10, numbers_font);
+    draw_digit(0, 6, _minute / 10, numbers_font);
+    draw_digit(4, 6, _minute % 10, numbers_font);
   }
 
   void draw_wait()
   {
-    draw_digit(0, 0, 'w');
-    draw_digit(4, 0, 'i');
-    draw_digit(0, 6, 'f');
-    draw_digit(4, 6, 'i');
+    draw_digit(0, 0, 'w', font);
+    draw_digit(4, 0, 'i', font);
+    draw_digit(0, 6, 'f', font);
+    draw_digit(4, 6, 'i', font);
   }
 
 public:
