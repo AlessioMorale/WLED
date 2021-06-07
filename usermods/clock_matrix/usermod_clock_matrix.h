@@ -21,9 +21,9 @@ private:
   uint8_t last_count = 0;
   bool _colour_from_state = false;
   CRGB _clock_digits_colour;
-  uint8_t hour = 0;
-  uint8_t minute = 0;
-  uint8_t second = 0;
+  uint8_t _hour = 0;
+  uint8_t _minute = 0;
+  uint8_t _second = 0;
   struct tm timeinfo;
 
   static constexpr size_t MATRIX_WIDTH = 7;
@@ -115,22 +115,19 @@ private:
 
   bool update_time()
   {
-    if (getLocalTime(&timeinfo))
-    {
-      hour = timeinfo.tm_hour;
-      minute = timeinfo.tm_min;
-      second = timeinfo.tm_sec;
-      return true;
-    }
-    return false;
+    updateLocalTime();
+    _hour = hour(localTime);
+    _minute = minute(localTime);
+    _second = second(localTime);
+    return true;
   }
 
   void draw_clock()
   {
-    draw_digit(0, 0, hour / 10 + 48);
-    draw_digit(4, 0, hour % 10 + 48);
-    draw_digit(0, 6, minute / 10 + 48);
-    draw_digit(4, 6, minute % 10 + 48);
+    draw_digit(0, 0, _hour / 10 + 48);
+    draw_digit(4, 0, _hour % 10 + 48);
+    draw_digit(0, 6, _minute / 10 + 48);
+    draw_digit(4, 6, _minute % 10 + 48);
   }
 
   void draw_wait()
