@@ -1,3 +1,5 @@
+#pragma once
+
 // (c) 2009, 2010 Lutz Sammer, License: AGPLv3
 
 	/// bitmap font structure
